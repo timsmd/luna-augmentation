@@ -1,0 +1,11 @@
+__pycache__/
+
+*.npy
+
+DATAFOLDER
+
+*.docx
+
+gan_generated/
+
+.ipynb_checkpoints
