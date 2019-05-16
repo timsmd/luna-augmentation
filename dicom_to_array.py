@@ -23,9 +23,9 @@ for num, patient in enumerate(lungPatients):
     if num % 100 == 0:
         print('Saved -', num)
     try:
-        patient_data = []
-        label, patient_data = dicom_to_array(patient=patient, labels_df=labels, size=size)
-        if label == 1:
+        if get_label(patient, labels) == 1:
+            patient_data = []
+            label, patient_data = dicom_to_array(patient=patient, labels_df=labels, size=size)
             for each in patient_data:
                 imageData.append(np.array(each))
     except KeyError as e:
