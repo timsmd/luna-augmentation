@@ -11,7 +11,7 @@ def dicom_to_array(patient, labels_df, size=Settings.size):
     return_slices = []
     for each in resized:
         return_slices.append(np.array(each)[np.newaxis, :, :])
-    return(return_slices)
+    return label, return_slices
 
 
 lungPatients, labels = load_data()
@@ -24,9 +24,10 @@ for num, patient in enumerate(lungPatients):
         print('Saved -', num)
     try:
         patient_data = []
-        patient_data = dicom_to_array(patient=patient, labels_df=labels, size=size)
-        for each in patient_data:
-            imageData.append(np.array(each))
+        label, patient_data = dicom_to_array(patient=patient, labels_df=labels, size=size)
+        if label == 1:
+            for each in patient_data:
+                imageData.append(np.array(each))
     except KeyError as e:
         print('Data is unlabeled')
     except Exception as er:
@@ -34,4 +35,4 @@ for num, patient in enumerate(lungPatients):
 
         
 ##Results are saved as numpy file
-np.save('imageDataNew-{}-{}.npy'.format(size, size), np.array(imageData))
+np.save('CancerImages-{}-{}.npy'.format(size, size), np.array(imageData))
