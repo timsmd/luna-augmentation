@@ -23,7 +23,9 @@ for num, patient in enumerate(lungPatients):
     if num % 100 == 0:
         print('Saved -', num)
     try:
+
         if get_label(patient, labels) == 1:
+            print('patient # {} out of {} - {} has cancer, processing'.format(num, len(lungPatients), patient))
             patient_data = []
             label, patient_data = dicom_to_array(patient=patient, labels_df=labels, size=size)
             for each in patient_data:
@@ -36,3 +38,4 @@ for num, patient in enumerate(lungPatients):
         
 ##Results are saved as numpy file
 np.save('CancerImages-{}-{}.npy'.format(size, size), np.array(imageData))
+print('finished...')

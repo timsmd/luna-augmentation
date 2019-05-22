@@ -1,6 +1,6 @@
 class Settings:
-    size = 512
+    size = 64
     no_slices = 20
-    data_dir = 'DATAFOLDER/stage1/'
-    labels_file = 'DATAFOLDER/stage1_labels/stage1_labels.csv'
+    data_dir = '/Volumes/Старый Джерри/Google Диск/stage1/'
+    labels_file = '/Volumes/Старый Джерри/Google Диск/stage1_labels.csv/stage1_labels.csv'
     aug_counter = 3
