@@ -14,31 +14,30 @@ def augment_patient(patient, labels_df, iteration=0, size=Settings.size, noslice
         label = np.array([1, 0])
 
     aug_slices = np.array([np.array(each_slice.pixel_array) for each_slice in slices])
-    
+
     # Augmentation formula
     seq = iaa.Sequential([
         iaa.Fliplr(0.5), # horizontal flips
-        iaa.Crop(percent=(0, 0.1)), # random crops
-        # Small gaussian blur with random sigma between 0 and 0.1.
-        # But we only blur about 10% of all images.
-        iaa.Sometimes(0.1,
-            iaa.GaussianBlur(sigma=(0, 0.1))
-        ),
-        # Make some images brighter and some darker.
-        # In 20% of all cases, we sample the multiplier once per channel,
-        # which can end up changing the color of the images.
-        iaa.Multiply((0.8, 1.2), per_channel=0.2),
-        # Apply affine transformations to each image.
-        # Scale/zoom them, translate/move them, rotate them and shear them.
+        iaa.Flipud(0.5), # vertical flips
+        iaa.ContrastNormalization((0.90, 1.1)),
         iaa.Affine(
-            scale={"x": (1, 1.2), "y": (1, 1.2)},
-            translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},
-            rotate=(-10, 10),
-            shear=(-2, 2)
+            scale={"x": (0.9, 1.2), "y": (0.9, 1.2)},
+            rotate=(-90, 90),
+            shear=(-10, 10)
         )
     ], random_order=True)
 
-    aug_slices = seq.augment_images(aug_slices)
+    images = []
+
+    aug_slices = np.transpose(aug_slices, (1, 2, 0))
+
+    images.append(aug_slices)
+
+    images = seq.augment_images(images)
+
+    aug_slices = images[0]
+
+    aug_slices = np.transpose(aug_slices, (2, 0, 1))
     
     resized_aug = []
     for i in range(len(aug_slices)):
@@ -53,7 +52,7 @@ def augment_patient(patient, labels_df, iteration=0, size=Settings.size, noslice
     for slice_chunk in chunks(resized_aug, chunk_sizes):
         slice_chunk = list(map(mean, zip(*slice_chunk)))
         new_aug_slices.append(slice_chunk)
-        
+
     augmented_patient_data = {
         'img_data': np.array(new_aug_slices),
         'patient': 'aug_' + patient + '_t{}'.format(iteration),
